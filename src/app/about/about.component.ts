@@ -15,18 +15,7 @@ export class AboutComponent implements OnInit {
   ngOnInit() {
 
 
-    const http$ = createHttpObservable('/api/courses')
-
-    const courses$ = http$
-      .pipe(
-        map(res=>{Object.values(res["payload"])})
-      )
-
-    courses$.subscribe(
-      value => console.log(value),
-      noop,
-      ()=>console.log("completed !")
-    )
+    
 
   }
 
