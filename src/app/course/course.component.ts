@@ -13,7 +13,7 @@ import {
     withLatestFrom,
     concatAll, shareReplay
 } from 'rxjs/operators';
-import {merge, fromEvent, Observable, concat} from 'rxjs';
+import {merge, fromEvent, Observable, concat, forkJoin} from 'rxjs';
 import {Lesson} from '../model/lesson';
 import { createHttpObservable } from '../common/util';
 import { debug, RxJsLoggingLevel } from '../common/debug';
@@ -42,10 +42,10 @@ export class CourseComponent implements OnInit, AfterViewInit {
 
         this.courseId = this.route.snapshot.params['id'];
 
-        this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
-          .pipe(
-            debug(RxJsLoggingLevel.INFO, "course value")
-          )
+        const course$ = createHttpObservable(`/api/courses/${this.courseId}`)
+        const lessons$ = this.loadLessons()
+
+        forkJoin(course$, lessons$).subscribe()
 
 
     }
@@ -56,11 +56,9 @@ export class CourseComponent implements OnInit, AfterViewInit {
         .pipe(
           map(event => event.target.value),
           startWith(""),
-          debug( RxJsLoggingLevel.INFO, "search"),
           debounceTime(401),
           distinctUntilChanged(),
           switchMap(search => this.loadLessons(search)),
-          debug(RxJsLoggingLevel.INFO, "lesson value")
 
         )
 
