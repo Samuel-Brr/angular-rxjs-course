@@ -52,7 +52,7 @@ export class CourseComponent implements OnInit, AfterViewInit {
         .pipe(
           map(event => event.target.value),
           startWith(""),
-          debounceTime(400),
+          debounceTime(401),
           distinctUntilChanged(),
           switchMap(search => this.loadLessons(search))
 
